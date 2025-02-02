@@ -1,7 +1,7 @@
 package com.example.smartenv.di
 
-import com.example.smartenv.Login.data.datasource.LoginAPI
-import com.example.smartenv.Login.data.repository.LoginService
+import com.example.smartenv.login.data.datasource.LoginAPI
+import com.example.smartenv.login.data.repository.LoginService
 import com.example.smartenv.core.network.RetrofitHelper
 import com.example.smartenv.register.data.datasource.RegisterAPI
 import com.example.smartenv.register.data.repository.RegisterService

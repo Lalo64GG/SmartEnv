@@ -1,7 +1,7 @@
-package com.example.smartenv.Login.data.datasource
+package com.example.smartenv.login.data.datasource
 
-import com.example.smartenv.Login.data.model.LoginUserRequest
-import com.example.smartenv.Login.data.model.LoginUserDTO
+import com.example.smartenv.login.data.model.LoginUserRequest
+import com.example.smartenv.login.data.model.LoginUserDTO
 
 import retrofit2.Response
 import retrofit2.http.Body

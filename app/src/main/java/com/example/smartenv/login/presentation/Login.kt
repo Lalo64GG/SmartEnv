@@ -1,4 +1,4 @@
-package com.example.smartenv.register.presentation
+package com.example.smartenv.login.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -28,66 +28,48 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.smartenv.register.presentation.components.RegisterContent
+import androidx.navigation.NavController
+import com.example.smartenv.login.presentation.components.LoginContent
 import com.example.smartenv.ui.theme.Gradient1
 
-
 @Composable
-fun RegisterScreen(
-    registerViewModel: RegisterViewModel = hiltViewModel()
+fun LoginScreen(
+    navController: NavController,
+    loginViewModel: LoginViewModel = hiltViewModel()
 ) {
-    val email: String by registerViewModel.email.observeAsState("")
-    val username: String by registerViewModel.username.observeAsState("")
-    val password: String by registerViewModel.password.observeAsState("")
+
+    val email by loginViewModel.email.observeAsState("")
+    val password by loginViewModel.password.observeAsState("")
     var isPasswordVisible by remember { mutableStateOf(false) }
-
-
 
     Column(
         modifier = Modifier
-        .fillMaxSize()
-        .background(MaterialTheme.colorScheme.background),
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background),
         verticalArrangement = Arrangement.Top
     ) {
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(300.dp)
-                .clip(shape = RoundedCornerShape(bottomEnd = 100.dp))
+                .clip(shape = RoundedCornerShape(bottomStart = 100.dp))
                 .background(
                     brush = Brush.verticalGradient(
                         colors = Gradient1
                     )
                 )
-        ){
+        ) {
             Box(
                 modifier = Modifier.align(Alignment.Center)
-            ){
-                Column(
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .padding(horizontal = 16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-
-                    Text(
-                        text = "Welcome",
-                        textAlign = TextAlign.Center,
-                        color = Color.White,
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 40.sp,
-                        modifier = Modifier.padding(bottom = 8.dp)
-                    )
-
-                    Text(
-                        text = "Please create an account to continue",
-                        textAlign = TextAlign.Center,
-                        color = Color.White,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Normal
-                    )
-                }
+            ) {
+                Text(
+                    text = "Hi There!\n\nPlease Log In",
+                    textAlign = TextAlign.Center,
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 40.sp
+                )
             }
         }
 
@@ -96,19 +78,22 @@ fun RegisterScreen(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.background)
                 .padding(16.dp),
             verticalArrangement = Arrangement.Center
         ) {
-            RegisterContent(
+            LoginContent(
                 email = email,
                 password = password,
-                username = username,
                 isPasswordVisible = isPasswordVisible,
-                onEmailChange = { registerViewModel.onChangeEmail(it) },
-                onPasswordChange = { registerViewModel.onChangePassword(it) },
-                onUsernameChange = { registerViewModel.onChangeUser(it) },
+                onEmailChange = { loginViewModel.onChangeEmail(it) },
+                onPasswordChange = { loginViewModel.onChangePassword(it) },
                 onTogglePasswordVisibility = { isPasswordVisible = !isPasswordVisible },
+                onLoginClick = {
+                    if (email.isNotEmpty() && password.isNotEmpty()) {
+                        // loginViewModel.loginUser(email, password)
+                    }
+                },
+                navController = navController
             )
         }
     }
