@@ -1,5 +1,6 @@
 package com.example.smartenv.login.presentation
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -29,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.smartenv.login.data.model.LoginUserRequest
 import com.example.smartenv.login.presentation.components.LoginContent
 import com.example.smartenv.ui.theme.Gradient1
 
@@ -54,11 +56,7 @@ fun LoginScreen(
                 .fillMaxWidth()
                 .height(300.dp)
                 .clip(shape = RoundedCornerShape(bottomStart = 100.dp))
-                .background(
-                    brush = Brush.verticalGradient(
-                        colors = Gradient1
-                    )
-                )
+                .background(Gradient1)
         ) {
             Box(
                 modifier = Modifier.align(Alignment.Center)
@@ -90,7 +88,14 @@ fun LoginScreen(
                 onTogglePasswordVisibility = { isPasswordVisible = !isPasswordVisible },
                 onLoginClick = {
                     if (email.isNotEmpty() && password.isNotEmpty()) {
-                        // loginViewModel.loginUser(email, password)
+                        var request = LoginUserRequest(email, password)
+                        loginViewModel.loginUser(request) { success, message ->
+                            if (success) {
+                                Log.d("Login", "${success}")
+                                navController.navigate("home")
+                            }
+
+                        }
                     }
                 },
                 navController = navController

@@ -14,6 +14,6 @@ interface RegisterAPI {
         @GET("v1/users/verificate/{email}")
         suspend fun validateEmail(@Path("email") email : String ): Response<EmailValidateDTO>
 
-        @POST("v1/users")
+        @POST("v1/users/")
         suspend fun createUser(@Body request : CreateUserRequest): Response<UserDTO>
 }

@@ -3,6 +3,8 @@ package com.example.smartenv.di
 import com.example.smartenv.login.data.datasource.LoginAPI
 import com.example.smartenv.login.data.repository.LoginService
 import com.example.smartenv.core.network.RetrofitHelper
+import com.example.smartenv.profile.data.datasource.ProfileAPI
+import com.example.smartenv.profile.data.repository.ProfileService
 import com.example.smartenv.register.data.datasource.RegisterAPI
 import com.example.smartenv.register.data.repository.RegisterService
 import dagger.Module
@@ -33,7 +35,21 @@ object NetworkModule {
         return RetrofitHelper.getRetrofit(LoginAPI::class.java)
     }
 
+    @Provides
+    @Singleton
     fun provideLoginService(loginAPI: LoginAPI): LoginService {
-        return  LoginService(loginAPI)
+        return LoginService(loginAPI)
+    }
+
+    @Provides
+    @Singleton
+    fun provideProfileAPI(): ProfileAPI {
+        return RetrofitHelper.getRetrofit(ProfileAPI::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideProfileService(profileAPI: ProfileAPI): ProfileService {
+        return ProfileService(profileAPI)
     }
 }

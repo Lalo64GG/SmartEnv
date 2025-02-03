@@ -16,7 +16,6 @@ import androidx.compose.ui.unit.sp
 
 val customButtonModifier = Modifier
     .fillMaxWidth()
-    .padding(horizontal = 10.dp)
     .height(50.dp)
 
 @Composable

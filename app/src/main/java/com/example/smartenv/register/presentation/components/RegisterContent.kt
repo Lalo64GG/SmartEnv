@@ -1,6 +1,8 @@
 package com.example.smartenv.register.presentation.components
 
+import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,16 +13,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldColors
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -30,6 +31,9 @@ import androidx.compose.ui.unit.dp
 import com.example.smartenv.shared.components.CustomButton
 import com.example.smartenv.shared.components.CustomTextField
 import com.example.smartenv.shared.icons.PasswordVisibilityIcon
+import com.example.smartenv.ui.theme.Gradient1
+import com.example.smartenv.ui.theme.RoundedModifier
+import com.example.smartenv.ui.theme.noBorderTextFieldColors
 
 @Composable
 fun RegisterContent(
@@ -41,34 +45,25 @@ fun RegisterContent(
     onPasswordChange: (String) -> Unit,
     onUsernameChange: (String) -> Unit,
     onTogglePasswordVisibility: () -> Unit,
-
+    validateEmail: () -> Unit,
+    createAccount: () -> Unit
 ){
-    val customColors = TextFieldDefaults.colors(
-        focusedLabelColor = MaterialTheme.colorScheme.primary,
-        unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
-        focusedContainerColor = MaterialTheme.colorScheme.background,
-        unfocusedContainerColor =MaterialTheme.colorScheme.background,
-        focusedIndicatorColor = MaterialTheme.colorScheme.background,
-        unfocusedIndicatorColor = MaterialTheme.colorScheme.background,
-        disabledIndicatorColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
-    )
-    val customModifier = Modifier
-        .shadow(
-            elevation = 4.dp,
-            shape = RoundedCornerShape(50.dp)
-        )
-        .background(Color.White, RoundedCornerShape(50.dp))
-
 
     CustomTextField(
         value = email,
-        onValueChange = onEmailChange,
+        onValueChange =  onEmailChange,
         label = "Email",
         type = KeyboardType.Email,
-        placeholder = "example@gmail.com",
-        colors = customColors,
         leadingIcon = { Icon(Icons.Default.Email, contentDescription = "Email Icon") },
-        modifier = customModifier
+        colors = noBorderTextFieldColors(),
+        placeholder = "example@gmail.com",
+        modifier = Modifier.onFocusChanged {  isFocusable ->
+            if(!isFocusable.hasFocus){
+                Log.d("Email", "Email: $email")
+                validateEmail()
+            }
+
+        }.then(RoundedModifier())
     )
 
     Spacer(Modifier.height(15.dp))
@@ -78,9 +73,9 @@ fun RegisterContent(
         onValueChange = onUsernameChange,
         label = "Username",
         placeholder = "JohnDoe",
-        colors = customColors,
+        colors = noBorderTextFieldColors(),
         leadingIcon = { Icon(Icons.Default.Person, contentDescription = "Person Icon") },
-        modifier = customModifier
+        modifier = RoundedModifier()
     )
 
     Spacer(Modifier.height(15.dp))
@@ -93,26 +88,40 @@ fun RegisterContent(
         visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
         placeholder = "*******",
         leadingIcon = { Icon(Icons.Default.Lock, contentDescription = "Lock Icon") },
-        colors = customColors,
+        colors = noBorderTextFieldColors(),
         trailingIcon = {
             PasswordVisibilityIcon(
                 isPasswordVisible = isPasswordVisible,
                 onToggleVisibility = onTogglePasswordVisibility
             )
         },
-        modifier = customModifier
+        modifier = RoundedModifier()
     )
 
     Spacer(modifier = Modifier.height(80.dp))
 
 
-    CustomButton(
-        onClick = {
-
-        },
-        text = "Sign up",
-        enabled = email.isNotEmpty() && password.isNotEmpty(),
-    )
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(60))
+            .background(Gradient1)
+    ) {
+        CustomButton(
+            onClick = {
+              createAccount()
+            },
+            text = "Register",
+            enabled = email.isNotEmpty() && password.isNotEmpty(),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.Transparent,
+                contentColor = Color.White,
+                disabledContainerColor = Color.Gray,
+                disabledContentColor = Color.White
+            ),
+            modifier = Modifier.fillMaxWidth()
+        )
+    }
 
     Spacer(modifier = Modifier.height(80.dp))
 
