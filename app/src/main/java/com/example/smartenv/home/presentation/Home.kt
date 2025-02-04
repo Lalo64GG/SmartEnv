@@ -1,54 +1,54 @@
 package com.example.smartenv.home.presentation
 
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.smartenv.R
+import com.example.smartenv.home.presentation.components.AirQualityGraph
+import com.example.smartenv.home.presentation.components.GraphCard
+import com.example.smartenv.home.presentation.components.TemperatureGraph
 import com.example.smartenv.ui.theme.Gradient1
 
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier, navController: NavController) {
     Column(
         modifier = modifier
-            .fillMaxSize()
-            .background(Gradient1),
+            .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Top
     ) {
         Text(
             text = "Bienvenido a SmartEnv",
-            color = Color.White,
+            color = Color.Black,
             fontSize = 28.sp,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
-            modifier = Modifier.padding(horizontal = 16.dp)
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp)
         )
 
-        Text(
-            text = "La mejor experiencia para la gestión ambiental",
-            color = Color.White.copy(alpha = 0.8f),
-            fontSize = 16.sp,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp)
-        )
+        GraphCard(title = "Temperatura") {
+            TemperatureGraph(modifier = Modifier.fillMaxWidth().height(200.dp))
+        }
+        Spacer(modifier = Modifier.height(20.dp))
+        GraphCard (title = "Calidad del Aire") {
+            AirQualityGraph(modifier = Modifier.fillMaxWidth().height(200.dp))
+        }
 
         Spacer(modifier = Modifier.height(20.dp))
 
         Button(
-            onClick = { navController.navigate("profile") }, // Cambia a la pantalla que quieras
+            onClick = { navController.navigate("profile") },
             colors = ButtonDefaults.buttonColors(containerColor = Color.White),
             shape = RoundedCornerShape(12.dp),
             modifier = Modifier
@@ -59,3 +59,5 @@ fun HomeScreen(modifier: Modifier = Modifier, navController: NavController) {
         }
     }
 }
+
+
