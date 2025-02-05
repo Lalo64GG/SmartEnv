@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -14,14 +15,29 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.smartenv.home.presentation.components.AirQualityGraph
 import com.example.smartenv.home.presentation.components.GraphCard
 import com.example.smartenv.home.presentation.components.TemperatureGraph
 import com.example.smartenv.ui.theme.Gradient1
+import kotlinx.coroutines.delay
 
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier, navController: NavController) {
+fun HomeScreen(
+    modifier: Modifier = Modifier,
+    navController: NavController,
+    homeViewModel: HomeViewModel = hiltViewModel()
+) {
+    LaunchedEffect(Unit) {
+        while (true) {
+            homeViewModel.getRecord()
+            delay(3000)
+        }
+    }
+
+    val record by homeViewModel.record.observeAsState()
+
     Column(
         modifier = modifier
             .fillMaxSize(),
@@ -38,11 +54,17 @@ fun HomeScreen(modifier: Modifier = Modifier, navController: NavController) {
         )
 
         GraphCard(title = "Temperatura") {
-            TemperatureGraph(modifier = Modifier.fillMaxWidth().height(200.dp))
+            TemperatureGraph(modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp),
+                temperature = record?.temperature?.toFloat() ?: 0.0f
+            )
         }
         Spacer(modifier = Modifier.height(20.dp))
         GraphCard (title = "Calidad del Aire") {
-            AirQualityGraph(modifier = Modifier.fillMaxWidth().height(200.dp))
+            AirQualityGraph(modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp))
         }
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -59,5 +81,3 @@ fun HomeScreen(modifier: Modifier = Modifier, navController: NavController) {
         }
     }
 }
-
-
