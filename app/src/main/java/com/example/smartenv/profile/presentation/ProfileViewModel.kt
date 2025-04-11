@@ -1,5 +1,6 @@
 package com.example.smartenv.profile.presentation
 
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -25,12 +26,41 @@ class ProfileViewModel @Inject constructor(
     private val _username = MutableLiveData<String>()
     val username: LiveData<String> = _username
 
+    // Para manejar la URI de la imagen del perfil
+    private val _profileImageUri = MutableStateFlow<Uri?>(null)
+    val profileImageUri = _profileImageUri
+
+    // Para manejar la URI temporal de la cámara (para capturar fotos)
+    private val _tempCameraUri = MutableLiveData<Uri?>(null)
+    val tempCameraUri: LiveData<Uri?> = _tempCameraUri
+
     init {
         loadUserData()
     }
 
     fun onChangeUsername(username: String) {
         _username.value = username
+    }
+
+    // Método para actualizar la URI de la imagen de perfil
+    fun updateProfileImage(uri: Uri?) {
+        _profileImageUri.value = uri
+        // Aquí puedes agregar código para guardar la URI en preferencias o en la base de datos si es necesario
+    }
+
+    // Método para establecer la URI temporal de la cámara
+    fun setTempCameraUri(uri: Uri?) {
+        _tempCameraUri.value = uri
+    }
+
+    // Método para confirmar la foto tomada por la cámara
+    fun confirmCameraImage() {
+        _tempCameraUri.value?.let {
+            _profileImageUri.value = it
+            // Aquí puedes agregar código para guardar la URI en preferencias o en la base de datos si es necesario
+        }
+        // Limpia la URI temporal
+        _tempCameraUri.value = null
     }
 
     fun saveUsername(username: String, onResult: (Boolean, String) -> Unit) {
@@ -54,7 +84,6 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-
     private fun loadUserData(){
         viewModelScope.launch {
             _userData.value = userPreferences.getUserData()
@@ -69,6 +98,5 @@ class ProfileViewModel @Inject constructor(
 
     fun getUserId(): String?{
         return _userData.value?.Id.toString()
-
     }
 }

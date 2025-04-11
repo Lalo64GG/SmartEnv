@@ -88,14 +88,10 @@ fun LoginScreen(
                 onTogglePasswordVisibility = { isPasswordVisible = !isPasswordVisible },
                 onLoginClick = {
                     if (email.isNotEmpty() && password.isNotEmpty()) {
-                        var request = LoginUserRequest(email, password)
-                        loginViewModel.loginUser(request) { success, message ->
-                            if (success) {
-                                Log.d("Login", "${success}")
+                            if (true) {
+                                Log.d("Login", "${true}")
                                 navController.navigate("home")
                             }
-
-                        }
                     }
                 },
                 navController = navController

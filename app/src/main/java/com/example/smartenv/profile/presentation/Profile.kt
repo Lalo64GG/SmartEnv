@@ -1,9 +1,10 @@
 package com.example.smartenv.profile.presentation
 
+import android.Manifest
+import android.content.Context
 import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -24,13 +25,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.FileProvider
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
 import com.example.smartenv.R
-import kotlinx.coroutines.flow.collectLatest
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.*
 
 @Composable
 fun ProfileScreen(
@@ -43,11 +45,63 @@ fun ProfileScreen(
     val context = LocalContext.current
     val username by profileViewModel.username.observeAsState("")
 
-    val launcher = rememberLauncherForActivityResult(
+    // Estado para controlar el diálogo de selección de imagen
+    var showImagePickerDialog by remember { mutableStateOf(false) }
+
+    // Launcher para seleccionar imagen de la galería
+    val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         imageUri = uri
     }
+
+    // Para guardar la URI de la foto tomada por la cámara
+    var tempCameraUri by remember { mutableStateOf<Uri?>(null) }
+
+    val cameraLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicture()
+    ) { success ->
+        if (success) {
+            imageUri = tempCameraUri
+        }
+    }
+
+    // Launcher para solicitar permiso de cámara
+    // Reemplaza el código dentro del launcher para solicitar permiso de cámara con este:
+
+    val cameraPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            try {
+                // Crear archivo temporal para la foto
+                val file = File(
+                    context.getExternalFilesDir(null),
+                    "temp_photo_${System.currentTimeMillis()}.jpg"
+                )
+
+                val uri = FileProvider.getUriForFile(
+                    context,
+                    context.applicationContext.packageName + ".fileprovider",
+                    file
+                )
+
+                tempCameraUri = uri
+                cameraLauncher.launch(uri)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Toast.makeText(
+                    context,
+                    "Error al preparar la cámara: ${e.message}",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        } else {
+            Toast.makeText(context, "Permiso de cámara denegado", Toast.LENGTH_SHORT).show()
+        }
+    }
+    // Launcher para tomar foto con la cámara
+
 
     Column(
         modifier = modifier
@@ -67,7 +121,7 @@ fun ProfileScreen(
                 .size(120.dp)
                 .clip(CircleShape)
                 .clickable {
-                    launcher.launch("image/*")
+                    showImagePickerDialog = true
                 }
         )
 
@@ -128,6 +182,52 @@ fun ProfileScreen(
             containerColor = Color.Red.copy(alpha = 0.5f),
             textColor = Color.White
         )
+    }
+
+    // Diálogo para seleccionar entre cámara y galería
+    if (showImagePickerDialog) {
+        AlertDialog(
+            onDismissRequest = { showImagePickerDialog = false },
+            title = { Text("Seleccionar imagen de perfil") },
+            text = { Text("¿Cómo deseas seleccionar tu imagen de perfil?") },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showImagePickerDialog = false
+                        cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+                    }
+                ) {
+                    Text("Cámara")
+                }
+            },
+            dismissButton = {
+                Button(
+                    onClick = {
+                        showImagePickerDialog = false
+                        galleryLauncher.launch("image/*")
+                    }
+                ) {
+                    Text("Galería")
+                }
+            }
+        )
+    }
+}
+
+// Función para crear un archivo de imagen temporal
+private fun createImageFile(context: Context): File? {
+    val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+    val imageFileName = "JPEG_${timeStamp}_"
+
+    return try {
+        File.createTempFile(
+            imageFileName,
+            ".jpg",
+            context.getExternalFilesDir(null)
+        )
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
     }
 }
 

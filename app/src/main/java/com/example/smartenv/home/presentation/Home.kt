@@ -1,5 +1,6 @@
 package com.example.smartenv.home.presentation
 
+import android.content.Context
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -11,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -34,6 +36,12 @@ fun HomeScreen(
             homeViewModel.getRecord()
             delay(3000)
         }
+    }
+
+    val context = LocalContext.current // Obtener el contexto aquí
+
+    SideEffect {
+        homeViewModel.vibratePhone(context, 3000) // Pasar el contexto válido
     }
 
     val record by homeViewModel.record.observeAsState()
@@ -79,5 +87,8 @@ fun HomeScreen(
         ) {
             Text(text = "Empezar", color = Color(0xFFffac44), fontSize = 18.sp, fontWeight = FontWeight.Bold)
         }
+
+
+
     }
 }

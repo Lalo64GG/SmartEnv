@@ -13,6 +13,7 @@ material2 = "1.7.6"
 navigationCompose = "2.8.5"
 retrofit = "2.11.0"
 converterGson = "2.11.0"
+leakcanary = "2.12"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -34,7 +35,7 @@ androidx-compose-material-icons-extended = { group = "androidx.compose.material"
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 com-squareup-retrofit2-retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit"}
 com-squareup-retrofit2-converter-json = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "converterGson"}
-
+com-squareup-leakcanary ={ group ='com.squareup.leakcanary', name ="leakcanary-android", version.ref="leakcanary"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
